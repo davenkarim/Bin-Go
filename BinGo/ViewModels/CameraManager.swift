@@ -32,7 +32,7 @@ class CameraManager: NSObject, ObservableObject {
     }
     
     private func setupModel() {
-        guard let coreMLModel = try? VNCoreMLModel(for: TrashDetectorAugmented().model) else {
+        guard let coreMLModel = try? VNCoreMLModel(for: TrashClassifierDavenTerbaru().model) else {
             print("Failed to load CoreML model")
             DispatchQueue.main.async {
                 self.errorMessage = "Failed to load CoreML model"
