@@ -1,0 +1,45 @@
+
+# === Xcode / macOS ===
+build/
+DerivedData/
+*.xcworkspace
+xcuserdata/
+*.xcodeproj/project.xcworkspace/
+*.xcodeproj/xcuserdata/
+*.xcodeproj/xcshareddata/WorkspaceSettings.xcsettings
+
+# === SwiftPM ===
+.build/
+Package.resolved
+Packages/
+.swiftpm/xcode/package.xcworkspace/
+
+# === CoreML-generated models ===
+*.mlmodelc
+
+# === User-specific settings ===
+*.xcuserstate
+
+# === macOS Files ===
+.DS_Store
+
+# === Logs & other ===
+*.log
+*.swp
+*.swo
+
+# === IDEs / Tools ===
+.idea/
+.vscode/
+
+# === Playgrounds ===
+timeline.xctimeline
+playground.xcworkspace
+
+# === Temporary files ===
+*.tmp
+*.temp
+
+# === CoreML training artifacts (optional) ===
+*.trainingMetrics.json
+*.trainingLog

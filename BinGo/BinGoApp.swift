@@ -11,7 +11,12 @@ import SwiftUI
 struct BinGoApp: App {
     var body: some Scene {
         WindowGroup {
-            ContentView()
+            CameraScanView()
+                .preferredColorScheme(.light)
+                .onAppear {
+                    // Force landscape orientation
+                    UIDevice.current.setValue(UIInterfaceOrientation.landscapeRight.rawValue, forKey: "orientation")
+                }
         }
     }
 }
