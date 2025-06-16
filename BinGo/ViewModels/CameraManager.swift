@@ -176,6 +176,7 @@ extension CameraManager: AVCaptureVideoDataOutputSampleBufferDelegate {
         lastScanTime = now
         
         guard let pixelBuffer = CMSampleBufferGetImageBuffer(sampleBuffer),
+              let croppedBuffer = cropToSquare(pixelBuffer), // Gunakan cropped buffer!
               let model = model else { return }
         
         let request = VNCoreMLRequest(model: model) { [weak self] req, err in
@@ -193,11 +194,64 @@ extension CameraManager: AVCaptureVideoDataOutputSampleBufferDelegate {
             }
         }
         
-        let handler = VNImageRequestHandler(cvPixelBuffer: pixelBuffer, options: [:])
+        let handler = VNImageRequestHandler(cvPixelBuffer: croppedBuffer, options: [:])
         do {
             try handler.perform([request])
         } catch {
             print("Vision request failed: \(error)")
         }
+    }
+}
+
+extension CameraManager {
+    private func cropToSquare(_ pixelBuffer: CVPixelBuffer) -> CVPixelBuffer? {
+        let width = CVPixelBufferGetWidth(pixelBuffer)
+        let height = CVPixelBufferGetHeight(pixelBuffer)
+        
+        // Calculate crop area (center 360x360)
+        let cropSize = 360
+        let cropX = max(0, (width - cropSize) / 2)
+        let cropY = max(0, (height - cropSize) / 2)
+        
+        // Perform crop (Core Graphics)
+        var croppedBuffer: CVPixelBuffer?
+        CVPixelBufferCreate(
+            nil,
+            cropSize,
+            cropSize,
+            CVPixelBufferGetPixelFormatType(pixelBuffer),
+            nil,
+            &croppedBuffer
+        )
+        
+        guard let croppedBuffer = croppedBuffer else { return nil }
+        
+        CVPixelBufferLockBaseAddress(pixelBuffer, .readOnly)
+        CVPixelBufferLockBaseAddress(croppedBuffer, [])
+        
+        defer {
+            CVPixelBufferUnlockBaseAddress(pixelBuffer, .readOnly)
+            CVPixelBufferUnlockBaseAddress(croppedBuffer, [])
+        }
+        
+        // Copy pixel data
+        if let src = CVPixelBufferGetBaseAddress(pixelBuffer),
+           let dst = CVPixelBufferGetBaseAddress(croppedBuffer) {
+            let srcRowBytes = CVPixelBufferGetBytesPerRow(pixelBuffer)
+            let dstRowBytes = CVPixelBufferGetBytesPerRow(croppedBuffer)
+            
+            for row in 0..<cropSize {
+                let srcOffset = (row + cropY) * srcRowBytes + cropX * 4
+                let dstOffset = row * dstRowBytes
+                
+                memcpy(
+                    dst.advanced(by: dstOffset),
+                    src.advanced(by: srcOffset),
+                    cropSize * 4
+                )
+            }
+        }
+        
+        return croppedBuffer
     }
 }

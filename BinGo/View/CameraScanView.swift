@@ -105,21 +105,19 @@ struct BlurOverlayView: View {
     let geometry: GeometryProxy
     
     var body: some View {
-        let isLandscape = geometry.size.width > geometry.size.height
-        let scanningWidth = isLandscape ? geometry.size.width * 0.4 : geometry.size.width * 0.6
-        let scanningHeight = isLandscape ? geometry.size.height * 0.8 : geometry.size.height * 0.7
+        let frameSize: CGFloat = 360
         
         ZStack {
-            // Full screen blur overlay
-            Color.black.opacity(0.4)
-                .blur(radius: 1)
+            // Dark overlay outside the frame
+            Color.black.opacity(0.5)
                 .ignoresSafeArea()
             
-            // Clear cutout area that matches the scanning frame
-            RoundedRectangle(cornerRadius: 20)
-                .frame(width: scanningWidth, height: scanningHeight)
+            // Clear the center area (360x360)
+            Rectangle()
+                .frame(width: frameSize, height: frameSize)
                 .blendMode(.destinationOut)
+                .position(x: geometry.size.width / 2, y: geometry.size.height / 2)
         }
-        .compositingGroup() // This is crucial for the blend mode to work properly
+        .compositingGroup()
     }
 }
