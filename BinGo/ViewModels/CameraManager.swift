@@ -22,7 +22,7 @@ class CameraManager: NSObject, ObservableObject {
     var previewLayer: AVCaptureVideoPreviewLayer?
     private var model: VNCoreMLModel?
     private var lastScanTime = Date(timeIntervalSince1970: 0)
-    private let scanInterval: TimeInterval = 5.0
+    private let scanInterval: TimeInterval = 2.0
     private var videoDataOutput: AVCaptureVideoDataOutput?
     private var isScanningPaused=false
     
@@ -156,7 +156,7 @@ class CameraManager: NSObject, ObservableObject {
           isScanningPaused = false
           // Reset the scan timer so it waits 5 seconds before scanning again
           lastScanTime = Date()
-          print("Scanning resumed - will scan again in 5 seconds")
+          print("Scanning resumed - will scan again in 2 seconds")
       }
     
     deinit {
@@ -185,7 +185,7 @@ class CameraManager: NSObject, ObservableObject {
 extension CameraManager: AVCaptureVideoDataOutputSampleBufferDelegate {
     func captureOutput(_ output: AVCaptureOutput, didOutput sampleBuffer: CMSampleBuffer, from connection: AVCaptureConnection) {
         guard !isScanningPaused else { return }
-
+        
         let now = Date()
         guard now.timeIntervalSince(lastScanTime) >= scanInterval else { return }
         lastScanTime = now
@@ -193,6 +193,9 @@ extension CameraManager: AVCaptureVideoDataOutputSampleBufferDelegate {
         guard let pixelBuffer = CMSampleBufferGetImageBuffer(sampleBuffer),
               let croppedBuffer = cropToSquare(pixelBuffer), // Gunakan cropped buffer!
               let model = model else { return }
+        
+        // Capture the cropped image for display
+        let capturedImage = createUIImageFromPixelBuffer(croppedBuffer)
         
         let request = VNCoreMLRequest(model: model) { [weak self] req, err in
             guard let results = req.results as? [VNClassificationObservation],
@@ -204,7 +207,8 @@ extension CameraManager: AVCaptureVideoDataOutputSampleBufferDelegate {
                 self?.detectedTrash = DetectedTrash(
                     name: first.identifier.capitalized,
                     category: category.rawValue,
-                    confidence: first.confidence
+                    confidence: first.confidence,
+                    capturedImage: capturedImage
                 )
             }
         }
@@ -268,5 +272,17 @@ extension CameraManager {
         }
         
         return croppedBuffer
+    }
+    
+    // NEW: Image conversion method
+    private func createUIImageFromPixelBuffer(_ pixelBuffer: CVPixelBuffer) -> UIImage? {
+        let ciImage = CIImage(cvPixelBuffer: pixelBuffer)
+        let context = CIContext()
+        
+        guard let cgImage = context.createCGImage(ciImage, from: ciImage.extent) else {
+            return nil
+        }
+        
+        return UIImage(cgImage: cgImage)
     }
 }

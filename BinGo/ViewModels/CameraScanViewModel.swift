@@ -51,10 +51,13 @@ class CameraScanViewModel: NSObject, ObservableObject {
     }
     
     private func handleDetectedTrash(_ item: DetectedTrash?) {
-        guard let item = item, !showPopup,
-        item.name.lowercased() != "background"
-        else { return }
+        guard let item = item,
+              !showPopup,
+              item.name.lowercased() != "background" else { return }
+        
+        // Pause scanning when popup appears
         cameraManager.pauseScanning()
+        
         detectedItem = item
         showPopup = true
         
@@ -62,13 +65,14 @@ class CameraScanViewModel: NSObject, ObservableObject {
         popupTimer?.invalidate()
         popupTimer = Timer.scheduledTimer(withTimeInterval: 5.0, repeats: false) { [weak self] _ in
             withAnimation(.easeOut(duration: 0.3)) {
-                self?.showPopup = false
+                self?.hidePopupAndResumeScanning()
             }
         }
     }
     
     private func hidePopupAndResumeScanning() {
-        showPopup=false
+        showPopup = false
+        // Resume scanning with 5-second timer reset
         cameraManager.resumeScanning()
     }
     
@@ -83,7 +87,7 @@ class CameraScanViewModel: NSObject, ObservableObject {
     
     func dismissPopup() {
         withAnimation(.easeOut(duration: 0.3)) {
-            showPopup = false
+            hidePopupAndResumeScanning()
         }
         popupTimer?.invalidate()
     }

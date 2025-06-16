@@ -8,12 +8,21 @@
 // MARK: - Models
 
 import Foundation
+import UIKit
 
 /// Represents a detected trash item
 struct DetectedTrash {
     let name: String
     let category: String
     let confidence: Float
+    let capturedImage: UIImage? // Add captured image
+    
+    init(name: String, category: String, confidence: Float, capturedImage: UIImage? = nil) {
+        self.name = name
+        self.category = category
+        self.confidence = confidence
+        self.capturedImage = capturedImage
+    }
 }
 
 /// Enum for trash categories
