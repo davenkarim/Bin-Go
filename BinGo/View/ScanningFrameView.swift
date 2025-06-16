@@ -12,7 +12,7 @@ struct ScanningFrameView: View {
     
     var body: some View {
         // Fixed size 360x360 square at center
-        let frameSize: CGFloat = 360
+        let frameSize: CGFloat = 480
         
         ZStack {
             // White border frame

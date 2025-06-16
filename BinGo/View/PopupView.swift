@@ -74,7 +74,7 @@ struct PopupImageView: View {
             // Image with green border frame
             Image(uiImage: image)
                 .resizable()
-                .aspectRatio(contentMode: .fill)
+                .aspectRatio(contentMode: .fit)
                 .frame(width: 120, height: 120)
                 .clipShape(RoundedRectangle(cornerRadius: 12))
                 .overlay(
@@ -93,7 +93,7 @@ struct PopupHeaderView: View {
     
     var body: some View {
         VStack(spacing: 15) {
-            Text("We think it's a")
+            Text("We think this might be a")
                 .font(.title2)
                 .foregroundColor(.secondary)
             
@@ -114,15 +114,37 @@ struct PopupHeaderView: View {
 /// Popup countdown component
 struct PopupCountdownView: View {
     let countdown: Int
+    private let totalDuration = 5 // Total waktu countdown
     
     var body: some View {
-        HStack {
-            Text("This pop up will be closed in")
-                .foregroundColor(.secondary)
+        VStack {
+            // Clock-style countdown
+            ZStack {
+                // Background circle (gray)
+                Circle()
+                    .stroke(lineWidth: 6)
+                    .foregroundColor(Color.gray.opacity(0.2))
+                    .frame(width: 50, height: 50)
+                
+                // Progress circle (green)
+                Circle()
+                    .trim(from: 0, to: CGFloat(countdown)/CGFloat(totalDuration))
+                    .stroke(style: StrokeStyle(lineWidth: 6, lineCap: .round))
+                    .foregroundColor(.green)
+                    .frame(width: 50, height: 50)
+                    .rotationEffect(.degrees(-90)) // biar start nya dari atas
+                    .animation(.easeInOut(duration: 0.5), value: countdown)
+                
+                // Countdown text
+                Text("\(countdown)")
+                    .font(.system(size: 20, weight: .bold))
+                    .foregroundColor(.green)
+            }
             
-            Text("\(countdown)")
-                .fontWeight(.bold)
-                .foregroundColor(.green)
+            // Text caption
+            Text("Closing in...")
+                .font(.caption)
+                .foregroundColor(.secondary)
         }
         .padding(.bottom, 15)
     }

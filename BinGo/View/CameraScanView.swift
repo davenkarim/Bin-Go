@@ -105,7 +105,7 @@ struct BlurOverlayView: View {
     let geometry: GeometryProxy
     
     var body: some View {
-        let frameSize: CGFloat = 360
+        let frameSize: CGFloat = 480
         
         ZStack {
             // Dark overlay outside the frame
