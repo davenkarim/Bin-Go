@@ -51,8 +51,10 @@ class CameraScanViewModel: NSObject, ObservableObject {
     }
     
     private func handleDetectedTrash(_ item: DetectedTrash?) {
-        guard let item = item, !showPopup else { return }
-        
+        guard let item = item, !showPopup,
+        item.name.lowercased() != "background"
+        else { return }
+        cameraManager.pauseScanning()
         detectedItem = item
         showPopup = true
         
@@ -63,6 +65,11 @@ class CameraScanViewModel: NSObject, ObservableObject {
                 self?.showPopup = false
             }
         }
+    }
+    
+    private func hidePopupAndResumeScanning() {
+        showPopup=false
+        cameraManager.resumeScanning()
     }
     
     func startCameraSession() {

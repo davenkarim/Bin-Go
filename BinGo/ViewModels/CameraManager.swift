@@ -24,6 +24,7 @@ class CameraManager: NSObject, ObservableObject {
     private var lastScanTime = Date(timeIntervalSince1970: 0)
     private let scanInterval: TimeInterval = 5.0
     private var videoDataOutput: AVCaptureVideoDataOutput?
+    private var isScanningPaused=false
     
     override init() {
         super.init()
@@ -146,6 +147,18 @@ class CameraManager: NSObject, ObservableObject {
         isSessionRunning = false
     }
     
+    func pauseScanning() {
+          isScanningPaused = true
+          print("Scanning paused")
+      }
+      
+      func resumeScanning() {
+          isScanningPaused = false
+          // Reset the scan timer so it waits 5 seconds before scanning again
+          lastScanTime = Date()
+          print("Scanning resumed - will scan again in 5 seconds")
+      }
+    
     deinit {
         NotificationCenter.default.removeObserver(self, name: UIDevice.orientationDidChangeNotification, object: nil)
     }
@@ -171,6 +184,8 @@ class CameraManager: NSObject, ObservableObject {
 // MARK: - Camera Delegate Extension
 extension CameraManager: AVCaptureVideoDataOutputSampleBufferDelegate {
     func captureOutput(_ output: AVCaptureOutput, didOutput sampleBuffer: CMSampleBuffer, from connection: AVCaptureConnection) {
+        guard !isScanningPaused else { return }
+
         let now = Date()
         guard now.timeIntervalSince(lastScanTime) >= scanInterval else { return }
         lastScanTime = now
