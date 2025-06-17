@@ -31,27 +31,32 @@ struct TrashDetectionPopup: View {
     @StateObject private var viewModel = PopupViewModel()
     
     var body: some View {
-        VStack(spacing: 0) {
-            // Header with detected item info
-            PopupHeaderView(detectedItem: detectedItem)
-            
+        
+        HStack(spacing:20) {
             // Captured image display
             if let capturedImage = detectedItem.capturedImage {
                 PopupImageView(image: capturedImage)
             }
+            VStack(spacing: 0) {
+                // Header with detected item info
+                PopupHeaderView(detectedItem: detectedItem)
+                
+                
+                
+                // Countdown
+                PopupCountdownView(countdown: viewModel.countdown)
+                
+                // Characters
+                PopupCharactersView()
+            }
             
-            // Countdown
-            PopupCountdownView(countdown: viewModel.countdown)
-            
-            // Characters
-            PopupCharactersView()
-        }
-        .frame(width: 500, height: capturedImage != nil ? 450 : 350) // Adjust height based on image
-        .background(
-            RoundedRectangle(cornerRadius: 20)
-                .fill(Color.white)
-                .shadow(radius: 20)
-        )
+        }.frame(width: 750, height: 480)
+            .background(
+                RoundedRectangle(cornerRadius: 20)
+                    .fill(Color.white)
+                    .shadow(radius: 20)
+            )
+        
         .onAppear {
             viewModel.startCountdown()
         }
@@ -74,8 +79,8 @@ struct PopupImageView: View {
             // Image with green border frame
             Image(uiImage: image)
                 .resizable()
-                .aspectRatio(contentMode: .fit)
-                .frame(width: 120, height: 120)
+                .aspectRatio(contentMode: .fill)
+                .frame(width: 240, height: 240)
                 .clipShape(RoundedRectangle(cornerRadius: 12))
                 .overlay(
                     RoundedRectangle(cornerRadius: 12)
