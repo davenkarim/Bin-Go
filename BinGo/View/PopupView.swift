@@ -114,41 +114,67 @@ struct PopupHeaderView: View {
 /// Popup countdown component
 struct PopupCountdownView: View {
     let countdown: Int
-    private let totalDuration = 5 // Total waktu countdown
+    private let totalDuration = 5
     
     var body: some View {
-        VStack {
-            // Clock-style countdown
-            ZStack {
-                // Background circle (gray)
-                Circle()
-                    .stroke(lineWidth: 6)
-                    .foregroundColor(Color.gray.opacity(0.2))
-                    .frame(width: 50, height: 50)
-                
-                // Progress circle (green)
-                Circle()
-                    .trim(from: 0, to: CGFloat(countdown)/CGFloat(totalDuration))
-                    .stroke(style: StrokeStyle(lineWidth: 6, lineCap: .round))
-                    .foregroundColor(.green)
-                    .frame(width: 50, height: 50)
-                    .rotationEffect(.degrees(-90)) // biar start nya dari atas
-                    .animation(.easeInOut(duration: 0.5), value: countdown)
-                
-                // Countdown text
-                Text("\(countdown)")
-                    .font(.system(size: 20, weight: .bold))
-                    .foregroundColor(.green)
-            }
+        ZStack {
+            // Background track
+            Circle()
+                .fill(Color.gray.opacity(0.2))
+                .frame(width: 50, height: 50)
             
-            // Text caption
-            Text("Closing in...")
-                .font(.caption)
-                .foregroundColor(.secondary)
+            // Smooth pie fill
+            SmoothPieShape(progress: progressValue)
+                .fill(fillColor)
+                .frame(width: 50, height: 50)
+                .animation(
+                    .timingCurve(0.25, 0.1, 0.25, 1, duration: 1.0),
+                    value: countdown
+                )
         }
         .padding(.bottom, 15)
     }
+    
+    private var progressValue: Double {
+        Double(totalDuration - countdown) / Double(totalDuration)
+    }
+    
+    private var fillColor: Color {
+        let progress = progressValue
+        if progress > 0.7 { return .red }
+        if progress > 0.4 { return .orange }
+        return .green
+    }
 }
+
+struct SmoothPieShape: Shape {
+    var progress: Double // 0.0 - 1.0
+    
+    var animatableData: Double {
+        get { progress }
+        set { progress = newValue }
+    }
+    
+    func path(in rect: CGRect) -> Path {
+        Path { path in
+            let center = CGPoint(x: rect.midX, y: rect.midY)
+            let radius = min(rect.width, rect.height) / 2
+            let startAngle = Angle(degrees: -90) // Mulai dari tengah atas (12 jam)
+            let endAngle = Angle(degrees: -90 + 360 * progress)
+            
+            path.move(to: center)
+            path.addArc(
+                center: center,
+                radius: radius,
+                startAngle: startAngle,
+                endAngle: endAngle,
+                clockwise: false
+            )
+            path.closeSubpath()
+        }
+    }
+}
+               
 
 /// Popup characters component
 struct PopupCharactersView: View {
