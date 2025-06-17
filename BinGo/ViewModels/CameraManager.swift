@@ -228,7 +228,7 @@ extension CameraManager {
         let height = CVPixelBufferGetHeight(pixelBuffer)
         
         // Calculate crop area (center 360x360)
-        let cropSize = 360
+        let cropSize = 480
         let cropX = max(0, (width - cropSize) / 2)
         let cropY = max(0, (height - cropSize) / 2)
         
@@ -274,7 +274,7 @@ extension CameraManager {
         return croppedBuffer
     }
     
-    // NEW: Image conversion method
+    // Image conversion method
     private func createUIImageFromPixelBuffer(_ pixelBuffer: CVPixelBuffer) -> UIImage? {
         let ciImage = CIImage(cvPixelBuffer: pixelBuffer)
         let context = CIContext()

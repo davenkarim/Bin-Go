@@ -105,7 +105,7 @@ struct BlurOverlayView: View {
     let geometry: GeometryProxy
     
     var body: some View {
-        let frameSize: CGFloat = 360
+        let frameSize: CGFloat = 480
         
         ZStack {
             // Dark overlay outside the frame
@@ -113,10 +113,11 @@ struct BlurOverlayView: View {
                 .ignoresSafeArea()
             
             // Clear the center area (360x360)
-            Rectangle()
+            RoundedRectangle(cornerRadius: 12)
                 .frame(width: frameSize, height: frameSize)
                 .blendMode(.destinationOut)
                 .position(x: geometry.size.width / 2, y: geometry.size.height / 2)
+                
         }
         .compositingGroup()
     }
