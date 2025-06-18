@@ -20,183 +20,214 @@ struct PopupOverlayView: View {
             }
         
         TrashDetectionPopup(detectedItem: detectedItem)
-            .transition(.scale.combined(with: .opacity)
-            .animation(.spring(response: 0.6, dampingFraction: 0.8)))
+            .transition(.scale.combined(with: .opacity))
+            .animation(.spring(response: 0.6, dampingFraction: 0.8))
     }
 }
 
-/// Trash detection popup view
 struct TrashDetectionPopup: View {
     let detectedItem: DetectedTrash
     @StateObject private var viewModel = PopupViewModel()
     
     var body: some View {
-        
-        HStack(spacing:20) {
-            // Captured image display
+        VStack(spacing: 0) {
+            // Main content with shadow
+            ZStack {
+                mainContent
+                    .background(
+                        RoundedRectangle(cornerRadius: 20)
+                            .fill(Color.white)
+                            .shadow(color: Color.black.opacity(0.1), radius: 20, x: 0, y: 10)
+                    )
+                
+                // characters
+                characterRow
+                    .offset(y: 250)
+            }
+        }
+        .frame(width: 750, height: 480)
+        .onAppear { viewModel.startCountdown() }
+        .onDisappear { viewModel.stopCountdown() }
+    }
+    
+    private var mainContent: some View {
+        HStack(spacing: 35) {
+            // Image section
             if let capturedImage = detectedItem.capturedImage {
-                PopupImageView(image: capturedImage)
+                imageSection(image: capturedImage)
+                    .padding(.top, 70)
+                    .padding(.leading, -50)
+                    .rotationEffect(.degrees(-5))
+                
             }
-            VStack(spacing: 0) {
-                // Header with detected item info
-                PopupHeaderView(detectedItem: detectedItem)
+            
+            // Info section
+            infoSection
+                .padding(.trailing, 30)
+                .padding(.top, 80)
+        }
+        .frame(width: 600, height: 600)
+    }
+    
+    private func imageSection(image: UIImage) -> some View {
+        VStack (alignment: .leading, spacing: 20) {
+            // Main image
+            ZStack {
+                Image(uiImage: image)
+                    .resizable()
+                    .aspectRatio(contentMode: .fill)
+                    .frame(width: 240, height: 240)
+                    .clipShape(RoundedRectangle(cornerRadius: 12))
+                    .overlay(
+                        RoundedRectangle(cornerRadius: 12)
+                            .stroke(Color("lightGreen"), lineWidth: 8)
+                    )
                 
-                
-                
-                // Countdown
+                // Sparkle effect
+                Image(systemName: "sparkle")
+                    .foregroundColor(.white)
+                    .font(.system(size: 50))
+                    .padding(8)
+                    .offset(x: -120, y: -120)
+            }
+            Spacer()
+        }
+    }
+    
+    private var infoSection: some View {
+        VStack(alignment: .leading, spacing: 0) {
+            // Countdown timer
+            HStack {
+                Spacer()
                 PopupCountdownView(countdown: viewModel.countdown)
+                    .padding(.trailing, 5)
+            }
+            .padding(.top, -80)
+            
+            // Header text
+            VStack(alignment: .leading, spacing: 10) {
+                Text("We think it's a")
+                    .font(.system(size: 25))
+                    .foregroundColor(.gray)
                 
-                // Characters
-                PopupCharactersView()
+                Text(detectedItem.name)
+                    .font(.system(size: 52, weight: .semibold))
+                    .foregroundColor(Color("darkGreen"))
+                
+                HStack {
+                    Text("and it's")
+                        .font(.system(size: 25))
+                        .foregroundColor(Color(.gray))
+                    
+                    Text("\(detectedItem.category)")
+                        .font(.system(size: 25))
+                        .foregroundColor(Color("normalGreen"))
+                        .underline()
+                        .fontWeight(.semibold)
+                }
             }
             
-        }.frame(width: 750, height: 480)
-            .background(
-                RoundedRectangle(cornerRadius: 20)
-                    .fill(Color.white)
-                    .shadow(radius: 20)
-            )
+            Spacer()
+            
+        }
+        .padding(.vertical, 30)
         
-        .onAppear {
-            viewModel.startCountdown()
-        }
-        .onDisappear {
-            viewModel.stopCountdown()
-        }
     }
     
-    private var capturedImage: UIImage? {
-        detectedItem.capturedImage
-    }
-}
-
-/// Popup image display component
-struct PopupImageView: View {
-    let image: UIImage
-    
-    var body: some View {
-        VStack {
-            // Image with green border frame
-            Image(uiImage: image)
+    private var characterRow: some View {
+        HStack (spacing: 0) {
+            Image("bingo_character_left")
                 .resizable()
-                .aspectRatio(contentMode: .fill)
-                .frame(width: 240, height: 240)
-                .clipShape(RoundedRectangle(cornerRadius: 12))
-                .overlay(
-                    RoundedRectangle(cornerRadius: 12)
-                        .stroke(Color.green, lineWidth: 3)
-                )
-                .shadow(color: .green.opacity(0.3), radius: 8, x: 0, y: 4)
+                .frame(width: 600, height: 600)
+                .padding(.trailing, -100)
+                .padding(.leading, 10)
+            
+            Image("bingo_character_middle")
+                .resizable()
+                .frame(width: 480, height: 350)
+            
+            Image("bingo_character_right")
+                .resizable()
+                .frame(width: 600, height: 600)
+                .padding(.leading, -80)
         }
-        .padding(.bottom, 15)
     }
 }
 
-/// Popup header component
-struct PopupHeaderView: View {
-    let detectedItem: DetectedTrash
-    
-    var body: some View {
-        VStack(spacing: 15) {
-            Text("We think this might be a")
-                .font(.title2)
-                .foregroundColor(.secondary)
-            
-            Text("\(detectedItem.name)!")
-                .font(.system(size: 36, weight: .bold))
-                .foregroundColor(.green)
-            
-            Text("and it's \(detectedItem.category)")
-                .font(.title2)
-                .foregroundColor(.green)
-                .underline()
-        }
-        .padding(.top, 30)
-        .padding(.bottom, 20)
-    }
-}
-
-/// Popup countdown component
 struct PopupCountdownView: View {
     let countdown: Int
     private let totalDuration = 5
     
     var body: some View {
         ZStack {
-            // Background track
+            // Static background circle
             Circle()
-                .fill(Color.gray.opacity(0.2))
-                .frame(width: 50, height: 50)
+                .fill(Color.white)
+                .frame(width: 60, height: 60)
             
-            // Smooth pie fill
+            // Animated decreasing fill (starts from top)
             SmoothPieShape(progress: progressValue)
-                .fill(fillColor)
-                .frame(width: 50, height: 50)
+                .fill(Color("darkGreen"))
+                .frame(width: 60, height: 60)
                 .animation(
                     .timingCurve(0.25, 0.1, 0.25, 1, duration: 1.0),
                     value: countdown
                 )
+                .overlay(
+                    Circle()
+                        .stroke(Color("darkGreen"), lineWidth: 3)
+                        .frame(width: 70, height: 70)
+                )
         }
-        .padding(.bottom, 15)
     }
     
-    private var progressValue: Double {
-        Double(totalDuration - countdown) / Double(totalDuration)
-    }
-    
-    private var fillColor: Color {
-        let progress = progressValue
-        if progress > 0.7 { return .red }
-        if progress > 0.4 { return .orange }
-        return .green
+    private var progressValue: CGFloat {
+        CGFloat(countdown) / CGFloat(totalDuration)
     }
 }
 
 struct SmoothPieShape: Shape {
-    var progress: Double // 0.0 - 1.0
+    var progress: CGFloat
     
-    var animatableData: Double {
+    var animatableData: CGFloat {
         get { progress }
         set { progress = newValue }
     }
     
     func path(in rect: CGRect) -> Path {
-        Path { path in
-            let center = CGPoint(x: rect.midX, y: rect.midY)
-            let radius = min(rect.width, rect.height) / 2
-            let startAngle = Angle(degrees: -90) // Mulai dari tengah atas (12 jam)
-            let endAngle = Angle(degrees: -90 + 360 * progress)
-            
-            path.move(to: center)
-            path.addArc(
-                center: center,
-                radius: radius,
-                startAngle: startAngle,
-                endAngle: endAngle,
-                clockwise: false
-            )
-            path.closeSubpath()
-        }
+        var path = Path()
+        let center = CGPoint(x: rect.midX, y: rect.midY)
+        let radius = min(rect.width, rect.height) / 2
+        
+        // Start from top (-90 degrees)
+        let startAngle = Angle(degrees: -90)
+        let endAngle = Angle(degrees: -90 + (360 * Double(progress)))
+        
+        path.move(to: center)
+        path.addArc(
+            center: center,
+            radius: radius,
+            startAngle: startAngle,
+            endAngle: endAngle,
+            clockwise: false
+        )
+        path.closeSubpath()
+        return path
     }
 }
-               
 
-/// Popup characters component
-struct PopupCharactersView: View {
-    var body: some View {
-        HStack(spacing: 30) {
-            Image("bingo_character_left")
-                .resizable()
-                .frame(width: 60, height: 60)
-            
-            Image("bingo_character_middle")
-                .resizable()
-                .frame(width: 60, height: 60)
-            
-            Image("bingo_character_right")
-                .resizable()
-                .frame(width: 60, height: 60)
-        }
-        .padding(.bottom, 20)
+// MARK: - Preview
+struct PopupView_Previews: PreviewProvider {
+    static var previews: some View {
+        let sampleItem = DetectedTrash(
+            name: "Cardboard",
+            category: "Recyclable",
+            confidence: 0.95,
+            capturedImage: UIImage(systemName: "photo")!
+        )
+        
+        TrashDetectionPopup(detectedItem: sampleItem)
+            .previewDevice("iPad Pro (11-inch) (4th generation)")
+            .previewInterfaceOrientation(.landscapeLeft)
     }
 }
