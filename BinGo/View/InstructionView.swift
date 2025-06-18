@@ -10,27 +10,39 @@ import SwiftUI
 struct InstructionView: View {
     var body: some View {
         VStack {
-            Spacer()
             HStack {
-                Image("bingo_character_middle")
+                Image("Arrow-Left").padding(.top,60)
+                Spacer()
+            }
+            Spacer()
+            HStack(spacing:0) {
+                Image("bingo_character_instruction")
                     .resizable()
-                    .frame(width: 80, height: 80)
-                
-                Text("Place your trash inside the box!")
-                    .font(.title2)
-                    .fontWeight(.semibold)
-                    .foregroundColor(.white)
-                    .padding(.horizontal, 20)
-                    .padding(.vertical, 10)
-                    .background(
-                        RoundedRectangle(cornerRadius: 15)
-                            .fill(Color.green)
-                    )
+                    .frame(width: 480, height: 480)
+                VStack {
+                    Spacer()
+                    Text("Place your trash inside the box!")
+                        .font(.title)
+                        .fontWeight(.semibold)
+                        .foregroundColor(.white)
+                        .lineLimit(1)
+                        .fixedSize(horizontal: true, vertical: false)
+                        .padding(.horizontal,30)
+                        .padding(.vertical, 20)
+                        .background(
+                            RoundedRectangle(cornerRadius: 15)
+                                .fill(Color.green)
+                        ).offset(x: -135, y: 0)
+                    Spacer().frame(height: 60)
+                }
+                VStack {
+                    Image("Arrow-Right")
+                    Spacer()
+                }
                 
                 Spacer()
             }
-            .padding(.bottom, 40)
-            .padding(.leading, 20)
+            .padding(.bottom, 80)
         }
     }
 }
@@ -49,4 +61,8 @@ struct ErrorView: View {
         }
         .padding()
     }
+}
+
+#Preview{
+    InstructionView()
 }

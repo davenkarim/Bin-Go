@@ -22,9 +22,6 @@ struct CameraScanView: View {
                 // Blur overlay with cutout for scanning area
                 BlurOverlayView(geometry: geometry)
                 
-                // Scanning frame overlay
-                ScanningFrameView(geometry: geometry)
-                
                 // Instruction text
                 InstructionView()
                 
@@ -107,7 +104,9 @@ struct BlurOverlayView: View {
     var body: some View {
         let frameSize: CGFloat = 480
         
+        
         ZStack {
+            
             // Dark overlay outside the frame
             Color.black.opacity(0.5)
                 .ignoresSafeArea()
@@ -117,8 +116,20 @@ struct BlurOverlayView: View {
                 .frame(width: frameSize, height: frameSize)
                 .blendMode(.destinationOut)
                 .position(x: geometry.size.width / 2, y: geometry.size.height / 2)
-                
+            
+            RoundedRectangle(cornerRadius: 12)
+                .stroke(Color.green, lineWidth: 3)
+                .frame(width: frameSize, height: frameSize)
+                .position(x: geometry.size.width / 2, y: geometry.size.height / 2)
+            Text("Please use rear camera to scan!")
+                .font(.headline)
+                .foregroundColor(.white)
+                .position(x: geometry.size.width / 2, y: geometry.size.height / 10)
         }
         .compositingGroup()
     }
+}
+
+#Preview {
+    CameraScanView()
 }

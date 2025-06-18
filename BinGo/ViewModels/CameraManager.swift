@@ -63,19 +63,19 @@ class CameraManager: NSObject, ObservableObject {
         guard let previewLayer = previewLayer else { return }
         
         let orientation = UIDevice.current.orientation
-        var videoOrientation: AVCaptureVideoOrientation = .portrait
+        var videoOrientation: AVCaptureVideoOrientation = .landscapeLeft
         
         switch orientation {
-        case .portrait:
-            videoOrientation = .portrait
-        case .portraitUpsideDown:
-            videoOrientation = .portraitUpsideDown
+//        case .portrait:
+//            videoOrientation = .portrait
+//        case .portraitUpsideDown:
+//            videoOrientation = .portraitUpsideDown
         case .landscapeLeft:
             videoOrientation = .landscapeRight
         case .landscapeRight:
             videoOrientation = .landscapeLeft
         default:
-            videoOrientation = .portrait
+            videoOrientation = .landscapeLeft
         }
         
         if previewLayer.connection?.isVideoOrientationSupported == true {
@@ -94,7 +94,7 @@ class CameraManager: NSObject, ObservableObject {
         
         DispatchQueue.global(qos: .userInitiated).async {
             let session = AVCaptureSession()
-            session.sessionPreset = .photo
+            session.sessionPreset = .hd1920x1080
             
             guard let device = AVCaptureDevice.default(for: .video),
                   let input = try? AVCaptureDeviceInput(device: device),
