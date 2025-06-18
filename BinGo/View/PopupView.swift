@@ -144,14 +144,22 @@ struct TrashDetectionPopup: View {
                 .padding(.trailing, -100)
                 .padding(.leading, 10)
             
-            Image("bingo_character_middle")
-                .resizable()
-                .frame(width: 480, height: 350)
+            if detectedItem.category == "Organic" {
+                Image("bingo_character_middle")
+                    .resizable()
+                    .frame(width: 480, height: 350)
+            } else {
+                Image("bingo_character_middle2")
+                    .resizable()
+                    .frame(width: 480, height: 350)
+                    .padding(.bottom, 30)
+                    .padding(.leading, 15)
+            }
             
             Image("bingo_character_right")
                 .resizable()
                 .frame(width: 600, height: 600)
-                .padding(.leading, -80)
+                .padding(.leading, -90)
         }
     }
 }
