@@ -37,6 +37,7 @@ struct InstructionView: View {
                 }
                 VStack {
                     Image("Arrow-Right")
+                        .offset(x:-40)
                     Spacer()
                 }
                 

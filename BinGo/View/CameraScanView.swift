@@ -104,35 +104,121 @@ class CameraPreviewView: UIView {
 /// Blur overlay with cutout for scanning area
 struct BlurOverlayView: View {
     let geometry: GeometryProxy
-    
+    let frameSize: CGFloat = 480
+
     var body: some View {
-        let frameSize: CGFloat = 480
-        
-        
         ZStack {
-            
-            // Dark overlay outside the frame
-            Color.black.opacity(0.5)
-                .ignoresSafeArea()
-            
-            // Clear the center area (360x360)
-            RoundedRectangle(cornerRadius: 12)
+            // Linear gradient overlay with blur, masked to carve out center
+            LinearGradient(
+                gradient: Gradient(stops: [
+                    .init(color: Color.black.opacity(0.3), location: 0.0),
+                    .init(color: Color.black.opacity(0.5), location: 0.6),
+                    .init(color: Color.black.opacity(0.8), location: 1.0)
+                ]),
+                startPoint: .top,
+                endPoint: .bottom
+            )
+            .overlay(
+                VisualEffectBlur(blurStyle: .systemUltraThinMaterial)
+                    .opacity(0.5)
+            )
+            .mask(
+                Rectangle()
+                    .overlay(
+                        // Transparent cutout in the center
+                        RoundedRectangle(cornerRadius: 12)
+                            .frame(width: frameSize, height: frameSize)
+                            .position(x: geometry.size.width / 2, y: geometry.size.height / 2)
+                            .blendMode(.destinationOut)
+                    )
+                    .compositingGroup()
+            )
+            .ignoresSafeArea()
+
+            // Green corner guide
+            CornerGuideView()
+                .stroke(Color("lightGreen"), lineWidth: 6)
                 .frame(width: frameSize, height: frameSize)
-                .blendMode(.destinationOut)
                 .position(x: geometry.size.width / 2, y: geometry.size.height / 2)
-            
-            RoundedRectangle(cornerRadius: 12)
-                .stroke(Color.green, lineWidth: 3)
-                .frame(width: frameSize, height: frameSize)
-                .position(x: geometry.size.width / 2, y: geometry.size.height / 2)
+                .offset(y: -25)
+
+            // Instruction
             Text("Please use rear camera to scan!")
                 .font(.headline)
                 .foregroundColor(.white)
                 .position(x: geometry.size.width / 2, y: geometry.size.height / 10)
         }
-        .compositingGroup()
     }
 }
+
+struct CornerGuideView: Shape {
+    var cornerLength: CGFloat = 135
+    var cornerRadius: CGFloat = 12
+    
+    func path(in rect: CGRect) -> Path {
+        var path = Path()
+        
+        let topLeft = CGPoint(x: rect.minX, y: rect.minY)
+        let topRight = CGPoint(x: rect.maxX, y: rect.minY)
+        let bottomRight = CGPoint(x: rect.maxX, y: rect.maxY)
+        let bottomLeft = CGPoint(x: rect.minX, y: rect.maxY)
+        
+        // Top-left corner
+        path.move(to: CGPoint(x: topLeft.x + cornerLength, y: topLeft.y))
+        path.addLine(to: CGPoint(x: topLeft.x + cornerRadius, y: topLeft.y))
+        path.addArc(center: CGPoint(x: topLeft.x + cornerRadius, y: topLeft.y + cornerRadius),
+                    radius: cornerRadius,
+                    startAngle: .degrees(-90),
+                    endAngle: .degrees(-180),
+                    clockwise: true)
+        path.addLine(to: CGPoint(x: topLeft.x, y: topLeft.y + cornerLength))
+        
+        // Top-right corner
+        path.move(to: CGPoint(x: topRight.x - cornerLength, y: topRight.y))
+        path.addLine(to: CGPoint(x: topRight.x - cornerRadius, y: topRight.y))
+        path.addArc(center: CGPoint(x: topRight.x - cornerRadius, y: topRight.y + cornerRadius),
+                    radius: cornerRadius,
+                    startAngle: .degrees(-90),
+                    endAngle: .degrees(0),
+                    clockwise: false)
+        path.addLine(to: CGPoint(x: topRight.x, y: topRight.y + cornerLength))
+        
+        // Bottom-right corner
+        path.move(to: CGPoint(x: bottomRight.x, y: bottomRight.y - cornerLength))
+        path.addLine(to: CGPoint(x: bottomRight.x, y: bottomRight.y - cornerRadius))
+        path.addArc(center: CGPoint(x: bottomRight.x - cornerRadius, y: bottomRight.y - cornerRadius),
+                    radius: cornerRadius,
+                    startAngle: .degrees(0),
+                    endAngle: .degrees(90),
+                    clockwise: false)
+        path.addLine(to: CGPoint(x: bottomRight.x - cornerLength, y: bottomRight.y))
+        
+        // Bottom-left corner
+        path.move(to: CGPoint(x: bottomLeft.x + cornerLength, y: bottomLeft.y))
+        path.addLine(to: CGPoint(x: bottomLeft.x + cornerRadius, y: bottomLeft.y))
+        path.addArc(center: CGPoint(x: bottomLeft.x + cornerRadius, y: bottomLeft.y - cornerRadius),
+                    radius: cornerRadius,
+                    startAngle: .degrees(90),
+                    endAngle: .degrees(180),
+                    clockwise: false)
+        path.addLine(to: CGPoint(x: bottomLeft.x, y: bottomLeft.y - cornerLength))
+        
+        return path
+    }
+}
+
+struct VisualEffectBlur: UIViewRepresentable {
+    var blurStyle: UIBlurEffect.Style
+    
+    func makeUIView(context: Context) -> UIVisualEffectView {
+        UIVisualEffectView(effect: UIBlurEffect(style: blurStyle))
+    }
+    
+    func updateUIView(_ uiView: UIVisualEffectView, context: Context) {
+        uiView.effect = UIBlurEffect(style: blurStyle)
+    }
+}
+
 
 #Preview {
     CameraScanView()
