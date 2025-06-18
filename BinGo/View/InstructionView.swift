@@ -42,7 +42,7 @@ struct InstructionView: View {
                 
                 Spacer()
             }
-            .padding(.bottom, 80)
+            .padding(.bottom, 100)
         }
     }
 }

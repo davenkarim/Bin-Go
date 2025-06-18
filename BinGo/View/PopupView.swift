@@ -43,9 +43,11 @@ struct TrashDetectionPopup: View {
                 // characters
                 characterRow
                     .offset(y: 250)
-            }
+                
+            }.padding(.bottom,140)
         }
         .frame(width: 750, height: 480)
+        .offset(x:-40)
         .onAppear { viewModel.startCountdown() }
         .onDisappear { viewModel.stopCountdown() }
     }
@@ -231,3 +233,4 @@ struct PopupView_Previews: PreviewProvider {
             .previewInterfaceOrientation(.landscapeLeft)
     }
 }
+

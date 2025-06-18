@@ -22,8 +22,11 @@ struct CameraScanView: View {
                 // Blur overlay with cutout for scanning area
                 BlurOverlayView(geometry: geometry)
                 
-                // Instruction text
+                // Instruction text - animate out when popup shows
                 InstructionView()
+                    .opacity(viewModel.showPopup ? 0 : 1)
+                    .offset(y: viewModel.showPopup ? -50 : 0)
+                    .animation(.easeOut(duration: 0.3), value: viewModel.showPopup)
                 
                 // Error message
                 if let errorMessage = viewModel.errorMessage {
@@ -33,6 +36,9 @@ struct CameraScanView: View {
                 // Popup overlay
                 if viewModel.showPopup, let item = viewModel.detectedItem {
                     PopupOverlayView(detectedItem: item, onDismiss: viewModel.dismissPopup)
+                        .offset(y: viewModel.showPopup ? 0 : 400)
+                        .animation(.linear(duration: 0.5), value: viewModel.showPopup)
+                        .zIndex(1)
                 }
             }
         }
