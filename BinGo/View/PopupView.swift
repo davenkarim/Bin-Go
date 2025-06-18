@@ -20,8 +20,8 @@ struct PopupOverlayView: View {
             }
         
         TrashDetectionPopup(detectedItem: detectedItem)
-            .transition(.scale.combined(with: .opacity))
-            .animation(.spring(response: 0.6, dampingFraction: 0.8))
+            .transition(.move(edge: .bottom).combined(with: .opacity))
+            .animation(.easeOut(duration: 0.3))
     }
 }
 
@@ -233,4 +233,3 @@ struct PopupView_Previews: PreviewProvider {
             .previewInterfaceOrientation(.landscapeLeft)
     }
 }
-

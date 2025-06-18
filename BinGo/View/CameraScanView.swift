@@ -36,8 +36,6 @@ struct CameraScanView: View {
                 // Popup overlay
                 if viewModel.showPopup, let item = viewModel.detectedItem {
                     PopupOverlayView(detectedItem: item, onDismiss: viewModel.dismissPopup)
-                        .offset(y: viewModel.showPopup ? 0 : 400)
-                        .animation(.linear(duration: 0.5), value: viewModel.showPopup)
                         .zIndex(1)
                 }
             }
