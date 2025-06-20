@@ -44,10 +44,10 @@ struct TrashDetectionPopup: View {
                 characterRow
                     .offset(y: 250)
                 
-            }.padding(.bottom,140)
+            }.padding(.bottom, 140)
         }
         .frame(width: 750, height: 480)
-        .offset(x:-40)
+        .offset(x: -40)
         .onAppear { viewModel.startCountdown() }
         .onDisappear { viewModel.stopCountdown() }
     }
@@ -72,7 +72,7 @@ struct TrashDetectionPopup: View {
     }
     
     private func imageSection(image: UIImage) -> some View {
-        VStack (alignment: .leading, spacing: 20) {
+        VStack(alignment: .leading, spacing: 20) {
             // Main image
             ZStack {
                 Image(uiImage: image)
@@ -137,7 +137,7 @@ struct TrashDetectionPopup: View {
     }
     
     private var characterRow: some View {
-        HStack (spacing: 0) {
+        HStack(spacing: 0) {
             Image("bingo_character_left")
                 .resizable()
                 .frame(width: 600, height: 600)
@@ -226,18 +226,21 @@ struct SmoothPieShape: Shape {
     }
 }
 
-// MARK: - Preview
-struct PopupView_Previews: PreviewProvider {
-    static var previews: some View {
-        let sampleItem = DetectedTrash(
-            name: "Cardboard",
-            category: "Recyclable",
-            confidence: 0.95,
-            capturedImage: UIImage(systemName: "photo")!
-        )
-        
-        TrashDetectionPopup(detectedItem: sampleItem)
-            .previewDevice("iPad Pro (11-inch) (4th generation)")
-            .previewInterfaceOrientation(.landscapeLeft)
-    }
-}
+/*
+ // MARK: - Preview
+// struct PopupView_Previews: PreviewProvider {
+//    static var previews: some View {
+//        let sampleItem = DetectedTrash(
+//            name: "Cardboard",
+//            category: "Recyclable",
+//            confidence: 0.95,
+//            capturedImage: UIImage(systemName: "photo")!
+//        )
+//        
+//        TrashDetectionPopup(detectedItem: sampleItem)
+//            .previewDevice("iPad Pro (11-inch) (4th generation)")
+//            .previewInterfaceOrientation(.landscapeLeft)
+//    }
+// }
+ 
+*/

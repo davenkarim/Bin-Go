@@ -65,7 +65,7 @@ struct CameraPreview: UIViewRepresentable {
 }
 
 /// Custom UIView to handle camera preview layer
-class CameraPreviewView: UIView {
+public class CameraPreviewView: UIView {
     private var currentPreviewLayer: AVCaptureVideoPreviewLayer?
     
     func setPreviewLayer(_ previewLayer: AVCaptureVideoPreviewLayer?) {
@@ -85,7 +85,7 @@ class CameraPreviewView: UIView {
         updatePreviewLayerFrame()
     }
     
-    override func layoutSubviews() {
+    public override func layoutSubviews() {
         super.layoutSubviews()
         updatePreviewLayerFrame()
     }
@@ -218,7 +218,6 @@ struct VisualEffectBlur: UIViewRepresentable {
         uiView.effect = UIBlurEffect(style: blurStyle)
     }
 }
-
 
 #Preview {
     CameraScanView()

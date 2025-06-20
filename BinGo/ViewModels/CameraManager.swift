@@ -13,7 +13,7 @@ import CoreML
 import Combine
 
 /// Camera management class (part of the data layer)
-class CameraManager: NSObject, ObservableObject {
+public class CameraManager: NSObject, ObservableObject {
     @Published var detectedTrash: DetectedTrash?
     @Published var isSessionRunning = false
     @Published var errorMessage: String?
@@ -183,7 +183,7 @@ class CameraManager: NSObject, ObservableObject {
 
 // MARK: - Camera Delegate Extension
 extension CameraManager: AVCaptureVideoDataOutputSampleBufferDelegate {
-    func captureOutput(_ output: AVCaptureOutput, didOutput sampleBuffer: CMSampleBuffer, from connection: AVCaptureConnection) {
+    public func captureOutput(_ output: AVCaptureOutput, didOutput sampleBuffer: CMSampleBuffer, from connection: AVCaptureConnection) {
         guard !isScanningPaused else { return }
         
         let now = Date()

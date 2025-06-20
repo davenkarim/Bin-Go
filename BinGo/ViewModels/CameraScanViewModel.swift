@@ -13,7 +13,7 @@ import CoreML
 import Combine
 
 /// ViewModel for camera scanning functionality
-class CameraScanViewModel: NSObject, ObservableObject {
+public class CameraScanViewModel: NSObject, ObservableObject {
     // Published properties for UI binding
     @Published var showPopup = false
     @Published var detectedItem: DetectedTrash?

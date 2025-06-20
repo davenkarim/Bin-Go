@@ -11,11 +11,11 @@ struct InstructionView: View {
     var body: some View {
         VStack {
             HStack {
-                Image("Arrow-Left").padding(.top,60)
+                Image("Arrow-Left").padding(.top, 60)
                 Spacer()
             }
             Spacer()
-            HStack(spacing:0) {
+            HStack(spacing: 0) {
                 Image("bingo_character_instruction")
                     .resizable()
                     .frame(width: 480, height: 480)
@@ -27,17 +27,17 @@ struct InstructionView: View {
                         .foregroundColor(.white)
                         .lineLimit(1)
                         .fixedSize(horizontal: true, vertical: false)
-                        .padding(.horizontal,30)
+                        .padding(.horizontal, 50)
                         .padding(.vertical, 20)
                         .background(
                             RoundedRectangle(cornerRadius: 15)
-                                .fill(Color.green)
+                                .fill(Color("darkGreen"))
                         ).offset(x: -135, y: 0)
                     Spacer().frame(height: 60)
                 }
                 VStack {
                     Image("Arrow-Right")
-                        .offset(x:-40)
+                        .offset(x: -40)
                     Spacer()
                 }
                 

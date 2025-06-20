@@ -9,7 +9,7 @@ import SwiftUI
 import Foundation
 import Combine
 
-class PopupViewModel: ObservableObject {
+public class PopupViewModel: ObservableObject {
     @Published var countdown = 5
     
     private var timer: Timer?
