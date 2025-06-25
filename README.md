@@ -63,9 +63,10 @@ The `.mlmodel` file is bundled into the app and runs fully **on-device**, ensuri
 
 ## 👥 Team Behind BinGo
 
-**PM: Amelia Morencia Irena
-Design: Aldrian Wicaksono, Timothy Putra
-Tech: Daven Karim, Samuel Dwi Putra**
+- **PM: Amelia Morencia Irena**
+- **Design: Aldrian Wicaksono, Timothy Putra**
+- **Tech: Daven Karim, Samuel Dwi Putra**
+
 Apple Developer Academy @ BINUS
 
 ---
