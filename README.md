@@ -1,6 +1,6 @@
 # 🗑️ BinGo — Smart Waste Classifier
 
-**BinGo** is a machine learning-powered iOS application that helps users classify waste items in real-time using image recognition. Built using **Swift**, **SwiftUI**, and the **MVVM architecture**, this app is designed for quick waste scanning and confident decision-making — all through a seamless, offline experience.
+**BinGo** is a machine learning-powered iPad application that helps users classify waste items in real-time using image recognition. Built using **Swift**, **SwiftUI**, and the **MVVM architecture**, this app is designed for quick waste scanning and confident decision-making — all through a seamless, offline experience.
 
 ## 💡 Project Overview
 
