@@ -61,6 +61,14 @@ The `.mlmodel` file is bundled into the app and runs fully **on-device**, ensuri
 
 ---
 
+## 📱 UI
+
+<img src="Documentation/Scan.jpeg" width="300"/>
+
+<img src="Documentation/Result.jpeg" width="300"/>
+
+---
+
 ## 👥 Team Behind BinGo
 
 - **PM: Amelia Morencia Irena**
